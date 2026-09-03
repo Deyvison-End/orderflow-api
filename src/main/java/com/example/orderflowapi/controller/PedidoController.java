@@ -7,6 +7,8 @@ import com.example.orderflowapi.facade.PedidoFacade;
 import com.example.orderflowapi.mapper.PedidoMapper;
 import com.example.orderflowapi.model.Pedido;
 import com.example.orderflowapi.service.PedidoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,10 @@ public class PedidoController {
         this.pedidoMapper = pedidoMapper;
     }
 
+    @Operation(
+            summary = "Lista todos os pedidos"
+
+    )
     @GetMapping
     public ResponseEntity<List<PedidoResponse>> listarTodos() {
 
@@ -43,6 +49,10 @@ public class PedidoController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Retornar o pedido",
+            description = "Verificar no banco de dados se possuir o pedido e retornar pedido caso exista caso retorna erro."
+    )
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> buscarPorId(
             @PathVariable Integer id) {
@@ -58,6 +68,14 @@ public class PedidoController {
         );
     }
 
+    @Operation(
+            summary = "Criar pedido",
+            description = "Cria um novo pedido e processa seu pagamento."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Pedido criado com sucesso"
+    )
     @PostMapping
     public ResponseEntity<PedidoResponse> criar(
             @Valid @RequestBody PedidoRequest request) {
@@ -72,6 +90,10 @@ public class PedidoController {
                 .body(response);
     }
 
+    @Operation(
+            summary = "Deletar o Pedido"
+
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
             @PathVariable Integer id) {

@@ -6,6 +6,8 @@ import com.example.orderflowapi.exception.ResourceNotFoundException;
 import com.example.orderflowapi.mapper.ClienteMapper;
 import com.example.orderflowapi.model.Cliente;
 import com.example.orderflowapi.service.ClienteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,10 @@ public class ClienteController {
         this.clienteMapper = clienteMapper;
     }
 
+    @Operation(
+            summary = "Retornar os clientes"
+
+    )
     @GetMapping
     public ResponseEntity<List<ClienteResponse>> listarTodos() {
 
@@ -38,6 +44,10 @@ public class ClienteController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Retornar um cliente"
+
+    )
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable("id") Integer id){
 
@@ -48,6 +58,14 @@ public class ClienteController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Criar cliente",
+            description = "Cria um novo cliente e processa seu pagamento."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Cliente criado com sucesso"
+    )
     @PostMapping
     public ResponseEntity<ClienteResponse> cadastrar( @Valid @RequestBody ClienteRequest request){
 
@@ -57,6 +75,10 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(
+            summary = "Atualizar um cliente"
+
+    )
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable("id") Integer id, @Valid @RequestBody ClienteRequest request){
 
@@ -72,6 +94,10 @@ public class ClienteController {
 
     }
 
+    @Operation(
+            summary = "Deleta um cliente"
+
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<?>  deletar(@PathVariable("id") Integer id){
         clienteService.buscarPorId(id).orElseThrow(() ->

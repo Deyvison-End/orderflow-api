@@ -6,6 +6,8 @@ import com.example.orderflowapi.exception.ResourceNotFoundException;
 import com.example.orderflowapi.mapper.ProdutoMapper;
 import com.example.orderflowapi.model.Produto;
 import com.example.orderflowapi.service.ProdutoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,10 @@ public class ProdutoController {
         this.produtoMapper = produtoMapper;
     }
 
+    @Operation(
+            summary = "Listar os produtos"
+
+    )
     @GetMapping
     public ResponseEntity<Page<ProdutoResponse>> listarTodos(
             @RequestParam(required = false) String nome,
@@ -52,6 +58,10 @@ public class ProdutoController {
     }
 
 
+    @Operation(
+            summary = "Retornar um produto"
+
+    )
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable("id") Integer id){
 
@@ -65,6 +75,14 @@ public class ProdutoController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Criar produto",
+            description = "Cria um novo produto e processa seu pagamento."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Produto criado com sucesso"
+    )
     @PostMapping
     public ResponseEntity<ProdutoResponse> cadastrar( @Valid @RequestBody ProdutoRequest request){
 
@@ -74,6 +92,10 @@ public class ProdutoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(
+            summary = "Atualizar um produto"
+
+    )
     @PutMapping("/{id}")
     public ResponseEntity<ProdutoResponse> atualizar(
             @PathVariable Integer id,

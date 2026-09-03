@@ -6,6 +6,8 @@ import com.example.orderflowapi.exception.ResourceNotFoundException;
 import com.example.orderflowapi.mapper.CategoriaMapper;
 import com.example.orderflowapi.model.Categoria;
 import com.example.orderflowapi.service.CategoriaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,10 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
         this.categoriaMapper = categoriaMapper;
     }
+    @Operation(
+            summary = "Listar categorias"
 
+    )
     @GetMapping
     public ResponseEntity<List<CategoriaResponse>> listarTodas() {
 
@@ -40,6 +45,10 @@ public class CategoriaController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Retornar uma categoria"
+
+    )
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable("id") Integer id){
 
@@ -50,6 +59,14 @@ public class CategoriaController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Criar categoria"
+
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Categoria criado com sucesso"
+    )
     @PostMapping
     public ResponseEntity<CategoriaResponse> cadastrar( @Valid @RequestBody CategoriaRequest request){
 
@@ -59,6 +76,10 @@ public class CategoriaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(
+            summary = "Atualizar um categoria"
+
+    )
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable("id") Integer id,  @Valid @RequestBody CategoriaRequest request){
 
@@ -73,7 +94,10 @@ public class CategoriaController {
         return ResponseEntity.ok(response);
 
     }
+    @Operation(
+            summary = "Deleta uma categoria"
 
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<?>  deletar(@PathVariable("id") Integer id){
         categoriaService.buscarPorId(id).orElseThrow(() ->
