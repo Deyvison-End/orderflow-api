@@ -15,9 +15,13 @@ public class EstoqueManager {
     public void baixarEstoque(Produto produto, Integer quantidade) {
         if (!possuiEstoque(produto, quantidade)) {
             throw new EstoqueInsuficienteException(
-                    "Quantidade solicitada maior que o estoque disponível."
+                    "Estoque insuficiente para o pedido " + produto.getNome()
             );
         }
+
+        produto.setQuantidadeEstoque(
+                produto.getQuantidadeEstoque() - quantidade
+        );
     }
         public void aumentarEstoque(Produto produto, Integer quantidade){
 
