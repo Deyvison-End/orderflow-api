@@ -34,3 +34,4 @@ build/
 
 # Arquivos locais
 local.properties
+application.properties
