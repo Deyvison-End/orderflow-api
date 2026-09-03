@@ -14,9 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/produto")
@@ -63,7 +62,7 @@ public class ProdutoController {
 
     )
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable("id") Integer id){
+    public ResponseEntity<ProdutoResponse> buscarPorId(@PathVariable("id") Integer id){
 
         Produto produto = produtoService.buscarPorId(id)
                 .orElseThrow(() ->
@@ -77,7 +76,7 @@ public class ProdutoController {
 
     @Operation(
             summary = "Criar produto",
-            description = "Cria um novo produto e processa seu pagamento."
+            description = "Cadastra um novo produto."
     )
     @ApiResponse(
             responseCode = "201",
@@ -86,9 +85,8 @@ public class ProdutoController {
     @PostMapping
     public ResponseEntity<ProdutoResponse> cadastrar( @Valid @RequestBody ProdutoRequest request){
 
-        Produto produto = produtoMapper.toEntity(request);
-        Produto produtoSalva = produtoService.cadastrar(produto);
-        ProdutoResponse response = produtoMapper.toResponse(produtoSalva);
+        Produto produtoSalvo = produtoService.cadastrar(request);
+        ProdutoResponse response = produtoMapper.toResponse(produtoSalvo);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

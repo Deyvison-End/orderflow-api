@@ -2,11 +2,11 @@ package com.example.orderflowapi.service;
 
 import com.example.orderflowapi.dto.request.ProdutoRequest;
 import com.example.orderflowapi.exception.ResourceNotFoundException;
+import com.example.orderflowapi.mapper.ProdutoMapper;
 import com.example.orderflowapi.model.Categoria;
 import com.example.orderflowapi.model.Produto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.stereotype.Service;
 import com.example.orderflowapi.repository.ProdutoRepository;
 import java.util.Optional;
@@ -18,10 +18,15 @@ import java.math.BigDecimal;
 public class ProdutoService {
     private final ProdutoRepository produtoRepository;
     private final CategoriaService categoriaService;
+    private final ProdutoMapper produtoMapper;
 
-    public  ProdutoService(ProdutoRepository produtoRepository, CategoriaService categoriaService){
+
+    public  ProdutoService(ProdutoRepository produtoRepository,
+                           CategoriaService categoriaService,
+                           ProdutoMapper produtoMapper){
         this.produtoRepository = produtoRepository;
         this.categoriaService = categoriaService;
+        this.produtoMapper = produtoMapper;
     }
 
     public Page<Produto> listarTodos(Pageable pageable){
@@ -32,13 +37,16 @@ public class ProdutoService {
         return produtoRepository.findById(id);
     }
 
-    public Produto cadastrar(Produto produto) {
-        Integer categoriaId = produto.getCategoria()
-                .getCategoriaId();
-        categoriaService.buscarPorId(categoriaId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Categoria não encontrada."
-                ));
+    public Produto cadastrar(ProdutoRequest request) {
+        Categoria categoria = categoriaService.buscarPorId(request.getCategoriaId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Categoria não encontrada.")
+                );
+
+        Produto produto = produtoMapper.toEntity(request);
+
+        produto.setCategoria(categoria);
+
         return produtoRepository.save(produto);
     }
 
