@@ -49,9 +49,13 @@ public class ClienteController {
 
     )
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable("id") Integer id){
+    public ResponseEntity<ClienteResponse> buscarPorId(@PathVariable("id") Integer id){
 
-        Cliente cliente = clienteService.buscarPorId(id).get();
+        Cliente cliente = clienteService.buscarPorId(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Cliente não encontrado."
+                        ));
 
         ClienteResponse response = clienteMapper.toResponse(cliente);
 
@@ -69,10 +73,14 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<ClienteResponse> cadastrar( @Valid @RequestBody ClienteRequest request){
 
-        Cliente Cliente = clienteMapper.toEntity(request);
-        Cliente ClienteSalva = clienteService.cadastrar(Cliente);
-        ClienteResponse response = clienteMapper.toResponse(ClienteSalva);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        Cliente clienteSalvo = clienteService.cadastrar(request);
+
+        ClienteResponse response =
+                clienteMapper.toResponse(clienteSalvo);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @Operation(
@@ -82,13 +90,11 @@ public class ClienteController {
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable("id") Integer id, @Valid @RequestBody ClienteRequest request){
 
-        clienteService.buscarPorId(id).orElseThrow(() ->
-                new ResourceNotFoundException("Cliente não encontrada."));
-        Cliente cliente = clienteMapper.toEntity(request);
-        cliente.setClienteId(id);
-        Cliente clienteSalva = clienteService.atualizar(id, cliente);
+        Cliente clienteSalvo =
+                clienteService.atualizar(id, request);
+
         ClienteResponse response =
-                clienteMapper.toResponse(clienteSalva);
+                clienteMapper.toResponse(clienteSalvo);
 
         return ResponseEntity.ok(response);
 
@@ -100,9 +106,8 @@ public class ClienteController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<?>  deletar(@PathVariable("id") Integer id){
-        clienteService.buscarPorId(id).orElseThrow(() ->
-                new ResourceNotFoundException("Cliente não encontrada."));
         clienteService.excluir(id);
+
         return ResponseEntity.noContent().build();
     }
 }
