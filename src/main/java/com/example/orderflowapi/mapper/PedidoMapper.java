@@ -1,6 +1,5 @@
 package com.example.orderflowapi.mapper;
 
-import com.example.orderflowapi.dto.request.PedidoRequest;
 import com.example.orderflowapi.dto.response.ItemPedidoResponse;
 import com.example.orderflowapi.dto.response.PedidoResponse;
 import com.example.orderflowapi.model.ItemPedido;
@@ -12,11 +11,6 @@ import java.util.List;
 @Component
 public class PedidoMapper {
 
-    public Pedido toEntity(PedidoRequest request) {
-
-        return Pedido.builder()
-                .build();
-    }
 
     public PedidoResponse toResponse(Pedido pedido) {
 

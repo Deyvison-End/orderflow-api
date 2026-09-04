@@ -35,8 +35,8 @@ public class PedidoController {
     }
 
     @Operation(
-            summary = "Lista todos os pedidos"
-
+            summary = "Lista todos os pedidos",
+            description = "Retorna todos os pedidos cadastrados."
     )
     @GetMapping
     public ResponseEntity<List<PedidoResponse>> listarTodos() {
@@ -50,8 +50,8 @@ public class PedidoController {
     }
 
     @Operation(
-            summary = "Retornar o pedido",
-            description = "Verificar no banco de dados se possuir o pedido e retornar pedido caso exista caso retorna erro."
+            summary = "Buscar pedido por ID",
+            description = "Retorna os dados de um pedido existente."
     )
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> buscarPorId(
@@ -91,18 +91,12 @@ public class PedidoController {
     }
 
     @Operation(
-            summary = "Deletar o Pedido"
-
-    )
+            summary = "Deletar o Pedido",
+            description = "Remove um pedido existente."
+            )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
             @PathVariable Integer id) {
-
-        pedidoService.buscarPorId(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Pedido não encontrado."
-                        ));
 
         pedidoService.excluir(id);
 

@@ -90,14 +90,21 @@ public class PedidoService {
     }
 
     public void excluir(Integer id){
-        pedidoRepository.deleteById(id);
+
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Pedido não encontrado."
+                        ));
+
+        pedidoRepository.delete(pedido);
     }
 
-    public Pedido atualizar(Integer id, Pedido pedido){
-
-        pedido.setPedidoId(id);
-
-      return pedidoRepository.save(pedido);
-    }
+//    public Pedido atualizar(Integer id, Pedido pedido){
+//
+//        pedido.setPedidoId(id);
+//
+//      return pedidoRepository.save(pedido);
+//    }
 
 }
