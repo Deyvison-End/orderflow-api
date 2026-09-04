@@ -75,15 +75,15 @@ public class PedidoFacade {
 
         pagamento.setValor(valorTotal.get());
 
-        pagamento.setDataPagamento(LocalDateTime.now());
-
         FormaPagamento formaPagamento = pagamento.getFormaPagamento();
 
         EstrategiaPagamento estrategiaPagamento = pagamentoFactory.criar(formaPagamento);
 
         if(estrategiaPagamento.pagar(pedido.getValorTotal())){
             pagamento.setStatusPagamento(StatusPagamento.APROVADO);
+            pagamento.setDataPagamento(LocalDateTime.now());
             pedido.setStatusPedido(StatusPedido.PAGO);
+
         }
         else{
             pagamento.setStatusPagamento(StatusPagamento.RECUSADO);

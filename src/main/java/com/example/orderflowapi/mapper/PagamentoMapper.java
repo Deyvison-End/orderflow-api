@@ -8,12 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagamentoMapper {
 
-    public Pagamento toEntity(PagamentoRequest request){
-        return Pagamento.builder()
-                .formaPagamento(request.getFormaPagamento())
-                .build();
-    }
-
     public PagamentoResponse toResponse(Pagamento pagamento){
 
         return PagamentoResponse.builder()

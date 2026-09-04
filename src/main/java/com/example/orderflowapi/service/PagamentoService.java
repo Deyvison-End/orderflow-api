@@ -37,17 +37,5 @@ public class PagamentoService {
 
           return pagamento;
    }
-   public Pagamento cadastrar(Pagamento pagamento){
-        return pagamentoRepository.save(pagamento);
-   }
 
-   public void excluir(Integer id){
-        pagamentoRepository.deleteById(id);
-   }
-   public Pagamento atualizar(Integer id, Pagamento pagamento){
-
-        pagamento.setPagamentoId(id);
-
-       return pagamentoRepository.save(pagamento);
-       }
 }
