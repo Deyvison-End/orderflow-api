@@ -5,6 +5,9 @@ import com.example.orderflowapi.dto.request.ClienteRequest;
 import com.example.orderflowapi.exception.ResourceNotFoundException;
 import com.example.orderflowapi.mapper.ClienteMapper;
 import com.example.orderflowapi.model.Cliente;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.example.orderflowapi.repository.ClienteRepository;
 import java.util.Optional;
@@ -20,8 +23,50 @@ public class ClienteService {
         this.clienteMapper = clienteMapper;
     }
 
-    public List<Cliente> listarTodos(){
-        return clienteRepository.findAll();
+        public Page<Cliente> buscarComFiltros(
+                String nome,
+                String cpf,
+                String email,
+                Pageable pageable) {
+
+            Specification<Cliente> specification =
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.isTrue(root.get("ativo"));
+
+                    if (nome != null && !nome.isBlank()) {
+
+                        specification = specification.and(
+                                (root, query, criteriaBuilder) ->
+                                        criteriaBuilder.like(
+                                                criteriaBuilder.lower(root.get("nome")),
+                                                "%" + nome.toLowerCase() + "%"
+                                        )
+                        );
+                    }
+                    if (cpf != null && !cpf.isBlank()) {
+
+                        specification = specification.and(
+                                (root, query, criteriaBuilder) ->
+                                        criteriaBuilder.like(
+                                                root.get("cpf"),
+                                                "%" + cpf + "%"
+                                        )
+                        );
+                    }
+                    if (email != null && !email.isBlank()) {
+
+                        specification = specification.and(
+                                (root, query, criteriaBuilder) ->
+                                        criteriaBuilder.like(
+                                                criteriaBuilder.lower(root.get("email")),
+                                                "%" + email.toLowerCase() + "%"
+                                        )
+                        );
+                    }
+                return clienteRepository.findAll(
+                        specification,
+                        pageable
+                );
     }
 
     public Optional<Cliente> buscarPorId(Integer id){

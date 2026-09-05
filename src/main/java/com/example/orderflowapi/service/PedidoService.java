@@ -2,8 +2,13 @@ package com.example.orderflowapi.service;
 
 import com.example.orderflowapi.enums.StatusPagamento;
 import com.example.orderflowapi.model.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.example.orderflowapi.repository.PedidoRepository;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import com.example.orderflowapi.dto.request.ItemPedidoRequest;
@@ -82,9 +87,110 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    public List<Pedido> listarTodos(){
-        return pedidoRepository.findAll();
+    public Page<Pedido> buscarComFiltros(
+            Integer clienteId,
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            BigDecimal valorMin,
+            BigDecimal valorMax,
+            StatusPedido statusPedido,
+            Pageable pageable) {
+
+        Specification<Pedido> specification =
+                (root, query, criteriaBuilder) ->
+                        criteriaBuilder.conjunction();
+
+        if (dataInicio != null &&
+                dataFim != null &&
+                dataInicio.isAfter(dataFim)) {
+
+            throw new IllegalArgumentException(
+                    "A data inicial não pode ser posterior à data final."
+            );
+        }
+
+        if (valorMin != null &&
+                valorMax != null &&
+                valorMin.compareTo(valorMax) > 0) {
+
+            throw new IllegalArgumentException(
+                    "O valor mínimo não pode ser maior que o valor máximo."
+            );
+        }
+
+        if (clienteId != null) {
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.equal(
+                                    root.get("cliente").get("clienteId"),
+                                    clienteId
+                            )
+            );
+        }
+
+        if (dataInicio != null) {
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.greaterThanOrEqualTo(
+                                    root.get("dataPedido"),
+                                    dataInicio.atStartOfDay()
+                            )
+            );
+        }
+
+        if (dataFim != null) {
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.lessThan(
+                                    root.get("dataPedido"),
+                                    dataFim.plusDays(1).atStartOfDay()
+                            )
+            );
+        }
+
+        if (valorMin != null) {
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.greaterThanOrEqualTo(
+                                    root.get("valorTotal"),
+                                    valorMin
+                            )
+            );
+        }
+
+        if (valorMax != null) {
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.lessThanOrEqualTo(
+                                    root.get("valorTotal"),
+                                    valorMax
+                            )
+            );
+        }
+
+        if (statusPedido != null) {
+
+            specification = specification.and(
+                    (root, query, criteriaBuilder) ->
+                            criteriaBuilder.equal(
+                                    root.get("statusPedido"),
+                                    statusPedido
+                            )
+            );
+        }
+
+        return pedidoRepository.findAll(
+                specification,
+                pageable
+        );
     }
+
+
     public Optional<Pedido> buscarPorId(Integer id){
         return pedidoRepository.findById(id);
     }

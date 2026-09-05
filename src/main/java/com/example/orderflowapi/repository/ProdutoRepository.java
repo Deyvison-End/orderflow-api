@@ -11,6 +11,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Integer >,
         JpaSpecificationExecutor<Produto> {
-    Page<Produto> findByNomeContaining(String nome, Pageable pageable);
 
 }

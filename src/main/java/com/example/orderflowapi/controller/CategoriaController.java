@@ -9,6 +9,8 @@ import com.example.orderflowapi.service.CategoriaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +32,11 @@ public class CategoriaController {
 
     )
     @GetMapping
-    public ResponseEntity<List<CategoriaResponse>> listarTodas() {
+    public ResponseEntity<Page<CategoriaResponse>> listarTodas(Pageable pageable) {
 
-        List<Categoria> categorias = categoriaService.listarTodos();
+        Page<Categoria> categorias = categoriaService.listarTodos(pageable);
 
-        List<CategoriaResponse> response = categorias.stream()
-                .map(categoriaMapper::toResponse)
-                .toList();
+        Page<CategoriaResponse> response = categorias.map(categoriaMapper::toResponse);
 
         return ResponseEntity.ok(response);
     }

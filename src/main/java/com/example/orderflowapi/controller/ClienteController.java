@@ -9,6 +9,8 @@ import com.example.orderflowapi.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +35,22 @@ public class ClienteController {
 
     )
     @GetMapping
-    public ResponseEntity<List<ClienteResponse>> listarTodos() {
+    public ResponseEntity<Page<ClienteResponse>> listarTodos(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String cpf,
+            @RequestParam(required = false) String email,
+            Pageable pageable) {
 
-        List<Cliente> clientes = clienteService.listarTodos();
+        Page<Cliente> clientes =
+                clienteService.buscarComFiltros(
+                        nome,
+                        cpf,
+                        email,
+                        pageable
+                );
 
-        List<ClienteResponse> response = clientes.stream()
-                .map(clienteMapper::toResponse)
-                .toList();
+        Page<ClienteResponse> response =
+                clientes.map(clienteMapper::toResponse);
 
         return ResponseEntity.ok(response);
     }

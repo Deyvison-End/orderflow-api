@@ -4,9 +4,10 @@ import com.example.orderflowapi.dto.request.CategoriaRequest;
 import com.example.orderflowapi.exception.ResourceNotFoundException;
 import com.example.orderflowapi.mapper.CategoriaMapper;
 import com.example.orderflowapi.model.Categoria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.example.orderflowapi.repository.CategoriaRepository;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,8 +21,11 @@ public class CategoriaService {
         this.categoriaMapper = categoriaMapper;
     }
 
-    public List<Categoria> listarTodos() {
-        return categoriaRepository.findAll();
+    public Page<Categoria> listarTodos(Pageable pageable) {
+
+
+        return categoriaRepository.findAll(pageable);
+
     }
 
 

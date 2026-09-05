@@ -2,6 +2,7 @@ package com.example.orderflowapi.controller;
 
 import com.example.orderflowapi.dto.request.PedidoRequest;
 import com.example.orderflowapi.dto.response.PedidoResponse;
+import com.example.orderflowapi.enums.StatusPedido;
 import com.example.orderflowapi.exception.ResourceNotFoundException;
 import com.example.orderflowapi.facade.PedidoFacade;
 import com.example.orderflowapi.mapper.PedidoMapper;
@@ -10,10 +11,14 @@ import com.example.orderflowapi.service.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -39,12 +44,24 @@ public class PedidoController {
             description = "Retorna todos os pedidos cadastrados."
     )
     @GetMapping
-    public ResponseEntity<List<PedidoResponse>> listarTodos() {
+    public ResponseEntity<Page<PedidoResponse>> listarTodos(
+            @RequestParam(required = false) Integer clienteId,
+            @RequestParam(required = false) LocalDate dataInicio,
+            @RequestParam(required = false) LocalDate dataFim,
+            @RequestParam(required = false) BigDecimal valorMin,
+            @RequestParam(required = false) BigDecimal valorMax,
+            @RequestParam(required = false) StatusPedido statusPedido,
+            Pageable pageable) {
 
-        List<PedidoResponse> response = pedidoService.listarTodos()
-                .stream()
-                .map(pedidoMapper::toResponse)
-                .toList();
+        Page<PedidoResponse> response = pedidoService.buscarComFiltros(clienteId,
+                        dataInicio,
+                        dataFim,
+                        valorMin,
+                        valorMax,
+                        statusPedido,
+                        pageable
+                        )
+                .map(pedidoMapper::toResponse);
 
         return ResponseEntity.ok(response);
     }

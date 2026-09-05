@@ -5,6 +5,8 @@ import com.example.orderflowapi.enums.FormaPagamento;
 import com.example.orderflowapi.enums.StatusPagamento;
 import com.example.orderflowapi.model.Pagamento;
 import com.example.orderflowapi.model.Pedido;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.example.orderflowapi.repository.PagamentoRepository;
 
@@ -20,8 +22,9 @@ public class PagamentoService {
         this.pagamentoRepository = pagamentoRepository;
     }
 
-   public List<Pagamento> listarTodos(){
-        return pagamentoRepository.findAll();
+   public Page<Pagamento> listarTodos(Pageable pageable){
+
+        return pagamentoRepository.findAll(pageable);
    }
 
    public Optional<Pagamento> buscarPorId(Integer id){

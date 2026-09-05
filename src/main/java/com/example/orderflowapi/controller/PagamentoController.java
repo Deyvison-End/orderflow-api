@@ -10,6 +10,8 @@ import com.example.orderflowapi.service.PagamentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +34,12 @@ public class PagamentoController {
 
     )
     @GetMapping
-    public ResponseEntity<List<PagamentoResponse>> listarTodos() {
+    public ResponseEntity<Page<PagamentoResponse>> listarTodos(Pageable pageable) {
 
-        List<Pagamento> pagamentos = pagamentoService.listarTodos();
+        Page<Pagamento> pagamentos = pagamentoService.listarTodos(pageable);
 
-        List<PagamentoResponse> response = pagamentos.stream()
-                .map(pagamentoMapper::toResponse)
-                .toList();
+        Page<PagamentoResponse> response = pagamentos.map(pagamentoMapper::toResponse);
+
 
         return ResponseEntity.ok(response);
     }

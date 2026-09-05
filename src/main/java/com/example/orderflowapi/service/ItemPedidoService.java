@@ -3,6 +3,8 @@ package com.example.orderflowapi.service;
 import com.example.orderflowapi.exception.ResourceNotFoundException;
 import com.example.orderflowapi.model.ItemPedido;
 import com.example.orderflowapi.model.Produto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.example.orderflowapi.repository.ItemPedidoRepository;
 
@@ -13,45 +15,37 @@ import java.util.Optional;
 @Service
 public class ItemPedidoService {
 
-    private final ItemPedidoRepository itemPedidoRepository;
     private final ProdutoService produtoService;
-    public ItemPedidoService(ItemPedidoRepository itemPedidoRepository,ProdutoService produtoService ){
-        this.itemPedidoRepository = itemPedidoRepository;
+
+    public ItemPedidoService(ProdutoService produtoService) {
         this.produtoService = produtoService;
     }
 
-    public void validarProduto(ItemPedido itemPedido){
-     Integer produtoId = itemPedido.getProduto().getProdutoId();
-     produtoService.buscarPorId(produtoId).orElseThrow(() -> new ResourceNotFoundException(
-                "Produto não existe"
-        ));
+    public void validarProduto(ItemPedido itemPedido) {
 
-    }
-    public BigDecimal calcularSubTotal(ItemPedido itemPedido){
-        BigDecimal quantidade = BigDecimal.valueOf(itemPedido.getQuantidade());
-        BigDecimal precoUnitario = itemPedido.getPrecoUnitario();
-        BigDecimal subTotal = quantidade.multiply(precoUnitario);
-        itemPedido.setSubtotal(subTotal);
-        return subTotal;
+        Integer produtoId =
+                itemPedido.getProduto().getProdutoId();
+
+        produtoService.buscarPorId(produtoId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Produto não existe."
+                        ));
     }
 
-    public List<ItemPedido> listarTodos(){
-        return itemPedidoRepository.findAll();
-    }
-    public Optional<ItemPedido> buscarPorID(Integer id){
-        return itemPedidoRepository.findById(id);
-    }
+    public BigDecimal calcularSubTotal(ItemPedido itemPedido) {
 
-    public ItemPedido Cadastrar(ItemPedido itemPedido){
-        return itemPedidoRepository.save(itemPedido);
-    }
-    public void excluir(Integer id){
-        itemPedidoRepository.deleteById(id);
-    }
-    public ItemPedido atualizar(Integer id,ItemPedido itemPedido){
+        BigDecimal quantidade =
+                BigDecimal.valueOf(itemPedido.getQuantidade());
 
-        itemPedido.setItemPedidoId(id);
+        BigDecimal precoUnitario =
+                itemPedido.getPrecoUnitario();
 
-        return itemPedidoRepository.save(itemPedido);
+        BigDecimal subtotal =
+                quantidade.multiply(precoUnitario);
+
+        itemPedido.setSubtotal(subtotal);
+
+        return subtotal;
     }
 }
