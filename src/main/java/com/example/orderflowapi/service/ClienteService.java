@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.example.orderflowapi.repository.ClienteRepository;
+
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.List;
 
@@ -76,6 +78,7 @@ public class ClienteService {
 
     public Cliente cadastrar(ClienteRequest request) {
         Cliente cliente = clienteMapper.toEntity(request);
+        cliente.setDataCadastro(LocalDate.now());
         return clienteRepository.save(cliente);
     }
 
