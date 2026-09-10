@@ -84,7 +84,8 @@ public class ProdutoService {
     }
 
     public Optional<Produto> buscarPorId(Integer id){
-        return produtoRepository.findById(id);
+        return produtoRepository.findById(id)
+                .filter(Produto::getAtivo);
     }
 
     public Produto cadastrar(ProdutoRequest request) {

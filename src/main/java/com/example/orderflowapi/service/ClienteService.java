@@ -70,7 +70,8 @@ public class ClienteService {
     }
 
     public Optional<Cliente> buscarPorId(Integer id){
-        return clienteRepository.findById(id);
+        return clienteRepository.findById(id)
+                .filter(Cliente::getAtivo);
     }
 
     public Cliente cadastrar(ClienteRequest request) {
