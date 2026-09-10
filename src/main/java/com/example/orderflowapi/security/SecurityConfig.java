@@ -63,12 +63,8 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Autenticação
                         .requestMatchers("/auth/**").permitAll()
 
-                        // =========================
-                        // PRODUTO
-                        // =========================
 
                         .requestMatchers(HttpMethod.GET, "/produto/**")
                         .authenticated()
@@ -83,10 +79,6 @@ public class SecurityConfig {
                         .hasRole("ADMIN")
 
 
-                        // =========================
-                        // CLIENTE
-                        // =========================
-
                         .requestMatchers(HttpMethod.GET, "/cliente/**")
                         .authenticated()
 
@@ -100,10 +92,6 @@ public class SecurityConfig {
                         .hasRole("ADMIN")
 
 
-                        // =========================
-                        // PEDIDO
-                        // =========================
-
                         .requestMatchers(HttpMethod.GET, "/pedido/**")
                         .authenticated()
 
@@ -115,11 +103,6 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.DELETE, "/pedido/**")
                         .hasRole("ADMIN")
-
-
-                        // =========================
-                        // PAGAMENTO
-                        // =========================
 
                         .requestMatchers(HttpMethod.GET, "/pagamento/**")
                         .authenticated()
@@ -133,11 +116,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/pagamento/**")
                         .hasRole("ADMIN")
 
-
-                        // =========================
-                        // CATEGORIA
-                        // =========================
-
                         .requestMatchers(HttpMethod.GET, "/categoria/**")
                         .authenticated()
 
@@ -150,8 +128,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/categoria/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
 
-                        // Qualquer outra rota exige autenticação
                         .anyRequest().authenticated()
                 )
 
