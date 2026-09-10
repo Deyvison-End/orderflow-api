@@ -1,6 +1,6 @@
 package com.example.orderflowapi.security;
 
-import com.example.orderflowapi.Usuario;
+import com.example.orderflowapi.model.Usuario;
 import com.example.orderflowapi.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
