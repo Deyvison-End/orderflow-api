@@ -15,6 +15,7 @@ import lombok.*;
 @Entity
 @Builder
 public class Cliente {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer clienteId;
@@ -23,5 +24,6 @@ public class Cliente {
     private String cpf;
     private String telefone;
     private LocalDate dataCadastro;
-
+    @Builder.Default
+    private Boolean ativo = true;
 }

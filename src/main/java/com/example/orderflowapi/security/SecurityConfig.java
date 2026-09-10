@@ -2,6 +2,7 @@ package com.example.orderflowapi.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,11 +17,16 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          CustomAuthenticationEntryPoint authenticationEntryPoint) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            CustomAuthenticationEntryPoint authenticationEntryPoint,
+            CustomAccessDeniedHandler accessDeniedHandler) {
+
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -50,13 +56,102 @@ public class SecurityConfig {
                 )
 
                 .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(
-                                authenticationEntryPoint
-                        )
+                        exception
+                                .authenticationEntryPoint(authenticationEntryPoint)
+                                .accessDeniedHandler(accessDeniedHandler)
                 )
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // Autenticação
                         .requestMatchers("/auth/**").permitAll()
+
+                        // =========================
+                        // PRODUTO
+                        // =========================
+
+                        .requestMatchers(HttpMethod.GET, "/produto/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/produto/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/produto/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/produto/**")
+                        .hasRole("ADMIN")
+
+
+                        // =========================
+                        // CLIENTE
+                        // =========================
+
+                        .requestMatchers(HttpMethod.GET, "/cliente/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/cliente/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/cliente/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/cliente/**")
+                        .hasRole("ADMIN")
+
+
+                        // =========================
+                        // PEDIDO
+                        // =========================
+
+                        .requestMatchers(HttpMethod.GET, "/pedido/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/pedido/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.PUT, "/pedido/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/pedido/**")
+                        .hasRole("ADMIN")
+
+
+                        // =========================
+                        // PAGAMENTO
+                        // =========================
+
+                        .requestMatchers(HttpMethod.GET, "/pagamento/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/pagamento/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.PUT, "/pagamento/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/pagamento/**")
+                        .hasRole("ADMIN")
+
+
+                        // =========================
+                        // CATEGORIA
+                        // =========================
+
+                        .requestMatchers(HttpMethod.GET, "/categoria/**")
+                        .authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/categoria/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/categoria/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/categoria/**")
+                        .hasRole("ADMIN")
+
+
+                        // Qualquer outra rota exige autenticação
                         .anyRequest().authenticated()
                 )
 

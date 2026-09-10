@@ -85,7 +85,9 @@ public class ClienteService {
                                 "Cliente não encontrado."
                         ));
 
-        clienteRepository.delete(cliente);
+        cliente.setAtivo(false);
+
+        clienteRepository.save(cliente);
     }
 
     public Cliente atualizar(Integer id, ClienteRequest request) {
